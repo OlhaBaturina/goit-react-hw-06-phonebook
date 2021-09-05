@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import action from '../../redux/contact-actions';
 import { v4 as uuidv4 } from 'uuid';
 import s from './Form.module.css';
 
@@ -61,3 +63,9 @@ export function Form({ submitMethod }) {
 Form.propTypes = {
     submitMethod: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = dispatch => ({
+    onSubmit: text => dispatch(action.deleteContact(text)),
+});
+
+export default connect(null, mapDispatchToProps)(Form);
