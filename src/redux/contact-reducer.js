@@ -1,20 +1,32 @@
-import { combineReducers } from 'redux';
-import types from './contact-types';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createReducer } from '@reduxjs/toolkit';
+import actions from './contact-actions';
 
-const items = (state = [], { type, payload }) => {
-    switch (type) {
-        case types.ADD:
-            return [...state, payload];
-        default:
-            return state;
-    }
-};
+const contactsReducer = createReducer([], {
+    [actions.getSubmitData]: (state, action) => {
+        if (
+            state.find(
+                state =>
+                    state.name.toLowerCase() ===
+                    action.payload.name.toLowerCase(),
+            )
+        ) {
+            toast.error('Hey, this name always here!');
+            return [...state];
+        }
+        return [...state, action.payload];
+    },
 
-const filter = (state = '', action) => {
-    return state;
-};
-
-export default combineReducers({
-    items,
-    filter,
+    [actions.handleDelete]: (state, action) => {
+        return state.filter(state => state.id !== action.payload);
+    },
 });
+
+const filterReducer = createReducer('', {
+    [actions.changeFilterValue]: (_, action) => {
+        return action.payload;
+    },
+});
+
+export default { contactsReducer, filterReducer };

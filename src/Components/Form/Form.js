@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import action from '../../redux/contact-actions';
 import { v4 as uuidv4 } from 'uuid';
 import s from './Form.module.css';
+import { useDispatch } from 'react-redux';
+import action from '../../redux/contact-actions';
 
-export function Form({ submitMethod }) {
+export function Form() {
+    Form.propTypes = {
+        submitMethod: PropTypes.func,
+    };
+
+    const dispatch = useDispatch();
+
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
-    const id = uuidv4();
+    const [id, setId] = useState('');
 
-    const handleClickName = event => setName(event.currentTarget.value);
-    const handleClickNumber = event => setNumber(event.currentTarget.value);
+    const handleClick = event => {
+        const { value, name, id } = event.target;
+
+        switch (name) {
+            case 'name':
+                setName(value.trim());
+                break;
+            case 'number':
+                setNumber(value);
+                break;
+            default:
+                return;
+        }
+        setId(id);
+    };
 
     const handleSubmit = event => {
         event.preventDefault();
-        submitMethod({ id: id, name: name, number: number });
+        dispatch(action.getSubmitData({ name, number, id }));
         resetState();
     };
 
     const resetState = () => {
-        setNumber('');
         setName('');
+        setNumber('');
+        setId('');
     };
 
     return (
@@ -36,7 +56,8 @@ export function Form({ submitMethod }) {
                     title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
                     required
                     value={name}
-                    onChange={handleClickName}
+                    onChange={handleClick}
+                    id={uuidv4()}
                 />
             </label>
 
@@ -49,8 +70,9 @@ export function Form({ submitMethod }) {
                     pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                     title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
                     required
-                    onChange={handleClickNumber}
+                    onChange={handleClick}
                     value={number}
+                    id={uuidv4()}
                 />
             </label>
             <button type="submit" className={s.button}>
@@ -60,12 +82,4 @@ export function Form({ submitMethod }) {
     );
 }
 
-Form.propTypes = {
-    submitMethod: PropTypes.func.isRequired,
-};
-
-const mapDispatchToProps = dispatch => ({
-    onSubmit: text => dispatch(action.deleteContact(text)),
-});
-
-export default connect(null, mapDispatchToProps)(Form);
+export default Form;
