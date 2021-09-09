@@ -5,16 +5,6 @@ import actions from './contact-actions';
 
 const contactsReducer = createReducer([], {
     [actions.getSubmitData]: (state, action) => {
-        if (
-            state.find(
-                state =>
-                    state.name.toLowerCase() ===
-                    action.payload.name.toLowerCase(),
-            )
-        ) {
-            toast.error('Hey, this name always here!');
-            return [...state];
-        }
         return [...state, action.payload];
     },
 

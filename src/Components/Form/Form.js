@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import s from './Form.module.css';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import action from '../../redux/contact-actions';
+import { toast } from 'react-toastify';
 
 export function Form() {
     Form.propTypes = {
@@ -32,8 +33,15 @@ export function Form() {
         setId(id);
     };
 
+    const contact = useSelector(({ contacts }) =>
+        contacts.map(({ name }) => name),
+    );
+
     const handleSubmit = event => {
         event.preventDefault();
+        if (contact.includes(name.toLowerCase())) {
+            return toast.error('Hey, this name always here!');
+        }
         dispatch(action.getSubmitData({ name, number, id }));
         resetState();
     };
@@ -81,5 +89,3 @@ export function Form() {
         </form>
     );
 }
-
-export default Form;
